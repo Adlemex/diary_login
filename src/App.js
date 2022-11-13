@@ -1,24 +1,39 @@
 import logo from './logo.svg';
 import './App.css';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import {useState} from "react";
+import {useCookies} from "react-cookie";
+import axios from "axios";
 
 function App() {
+  const [cookies, setCookie] = useCookies(['access_token'])
+  const [token, setToken] = useState();
+  const [userInfo, setUserInfo] = useState();
+  if(cookies.access_token != null && !token) setToken(cookies.access_token)
+  if(!token) {
+    return <Login setToken={setToken} />
+  }
+  if (token && !userInfo){
+      axios.get("http://127.0.0.1:8000/auth/login?code=" + token).then(
+          (res) => {
+              if (res.data.guid != null) {
+                  console.log(res.data)
+                  setUserInfo(res.data)
+              }
+          }
+      )
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="wrapper">
+        <BrowserRouter>
+            <Routes>
+            <Route path="/" element={<Dashboard />}>
+            </Route>
+            </Routes>
+        </BrowserRouter>
+      </div>
   );
 }
 
