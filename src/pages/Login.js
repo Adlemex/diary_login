@@ -11,16 +11,17 @@ export default function Login({ setToken }) {
     const [code, setCode] = useState(0)
     const [intervalId, setIntervalId] = useState(0)
     const [cookies, setCookie] = useCookies(['access_token'])
-    if (code == 0 && cookies.access_token == null){
-        axios.get("http://127.0.0.1:8000/auth/get_key").then((res) => {
+    if (code === 0 && cookies.access_token == null){
+        setCode(null)
+        axios.get("https://pskovedu.ml/api/auth/get_key").then((res) => {
             setCode(res.data);
         })
     }
-    else if (code == 0 && cookies.access_token != null) setCode(cookies.access_token)
+    else if (code === 0 && cookies.access_token != null) setCode(cookies.access_token)
     useEffect(() => {
         let id = setInterval((args) => {
-            if(code != 0) {
-                axios.get("http://127.0.0.1:8000/auth/verify?code=" + code).then(
+            if(code != null) {
+                axios.get("https://pskovedu.ml/api/auth/verify?code=" + code).then(
                     (res) => {
                         if (res.data.guid != null) {
                             console.log(res.data)
@@ -41,7 +42,7 @@ export default function Login({ setToken }) {
                     Дневник Pskovedu
                 </Typography>
             <Typography color="text.secondary">Отсканируйте QR-код в приложении Дневник>Сменить пользователя>QR</Typography>
-                {code != 0 ?
+                {code != null ?
                     <QRCode style={{margin: "10px"}} value={code.toString()} /> :
                     <CircularProgress style={{margin: "10px"}} />}
             </CardContent>

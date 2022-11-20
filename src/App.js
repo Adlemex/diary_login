@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import "./pages/Dashboard.css"
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -16,7 +17,7 @@ function App() {
     return <Login setToken={setToken} />
   }
   if (token && !userInfo){
-      axios.get("http://127.0.0.1:8000/auth/login?code=" + token).then(
+      axios.get("https://pskovedu.ml/api/auth/login?code=" + token).then(
           (res) => {
               if (res.data.guid != null) {
                   console.log(res.data)
@@ -29,7 +30,7 @@ function App() {
       <div className="wrapper">
         <BrowserRouter>
             <Routes>
-            <Route path="/" element={<Dashboard />}>
+            <Route path="/" element={<Dashboard user_info={userInfo} />}>
             </Route>
             </Routes>
         </BrowserRouter>
